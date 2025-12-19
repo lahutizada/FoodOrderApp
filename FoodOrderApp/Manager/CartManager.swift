@@ -2,8 +2,8 @@ import Foundation
 import UniformTypeIdentifiers
 
 final class CartManager {
-
     static let shared = CartManager()
+    
     private init() {
         loadCarts()
     }

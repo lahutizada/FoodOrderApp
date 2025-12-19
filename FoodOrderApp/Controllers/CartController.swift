@@ -16,18 +16,30 @@ class CartController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureUI()        
+        setupBottomContainer()
+        setupTotalLabel()
+        setupCheckoutButton()
+        setupEmptyState()
+        adjustForSmallScreens()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateCart()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    private func configureUI() {
         title = "Cart"
         table.delegate = self
         table.dataSource = self
         table.allowsSelection = false
         table.contentInset.bottom = 88
         table.verticalScrollIndicatorInsets.bottom = 88
-        
-        setupBottomContainer()
-        setupTotalLabel()
-        setupCheckoutButton()
-        setupEmptyState()
-        adjustForSmallScreens()
         
         NotificationCenter.default.addObserver(
             self,
@@ -42,18 +54,10 @@ class CartController: UIViewController {
             emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40)
         ])
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateCart()
-    }
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 }
 
 //MARK: Functions
-extension CartController {
-    
+extension CartController {    
     private func updateTotal() {
         let total = CartManager.shared.totalPrice
         totalLabel.text = String(format: "Total: %.2f ₼", total)
@@ -129,10 +133,8 @@ extension CartController: UITableViewDelegate, UITableViewDataSource {
         }
         return cell
     }
-    func tableView(
-        _ tableView: UITableView,
-        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
-    ) -> UISwipeActionsConfiguration? {
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let deleteAction = UIContextualAction(
             style: .destructive,
